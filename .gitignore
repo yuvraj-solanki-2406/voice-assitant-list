@@ -1,5 +1,3 @@
-./notebooks/random_forest.pkl
-./notebooks/vectorizer.pkl
 .env
 venv
 .vscode
