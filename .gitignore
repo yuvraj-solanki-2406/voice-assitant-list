@@ -1,6 +1,5 @@
+notebooks/random_forest.pkl
+notebooks/vectorizer.pkl
 .env
 venv
 .vscode
-notebooks/*.pkl
-notebooks/random_forest.pkl
-notebooks/vectorizer.pkl
