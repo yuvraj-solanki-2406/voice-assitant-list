@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech-to-Text</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+        }
+        p {
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Speech-to-Text Example</h1>
+    <button id="start">Start Listening</button>
+    <button id="stop">Stop Listening</button>
+    <p id="output">Your speech will appear here.</p>
+
+    <script>
+        // Check if the SpeechRecognition API is available
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+
+            // Configure SpeechRecognition
+            recognition.continuous = true; // Continue listening until stopped
+            recognition.interimResults = true; // Show interim results
+            recognition.lang = 'en-US'; // Language for recognition
+
+            const startButton = document.getElementById('start');
+            const stopButton = document.getElementById('stop');
+            const output = document.getElementById('output');
+
+            // Start recognition
+            startButton.addEventListener('click', () => {
+                recognition.start();
+                output.textContent = 'Listening... Please speak.';
+                console.log('Speech recognition started');
+            });
+
+            // Stop recognition
+            stopButton.addEventListener('click', () => {
+                recognition.stop();
+                output.textContent += '\nStopped listening.';
+                console.log('Speech recognition stopped');
+            });
+
+            // Capture speech results
+            recognition.onresult = (event) => {
+                let speechText = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    speechText += event.results[i][0].transcript;
+                }
+                output.textContent = `You said: ${speechText}`;
+            };
+
+            // Handle errors
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                output.textContent = `Error: ${event.error}`;
+            };
+        } else {
+            alert('Sorry, your browser does not support the Speech Recognition API.');
+        }
+    </script>
+</body>
+</html>

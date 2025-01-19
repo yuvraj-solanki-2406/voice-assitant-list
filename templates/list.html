@@ -1,0 +1,55 @@
+{% extends 'navbar.html' %}
+
+{% block title %}Your List{% endblock %}
+
+
+{% block content %}
+<div>
+    <div class="text-center">
+        <header class="shopping-list-header text-center">
+            <h1 class="shopping-list-title">My Shopping List</h1>
+        </header>
+    </div>
+    <div class="container my-5 cus_shadow p-5" style="width: 60%;">
+        {% for item in lists['item'] %}
+        <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id={{item}}>
+                <label class="form-check-label" for={{item}}>{{ item }}</label>
+            </div>
+            <div class="item-actions">
+                <button class="btn btn-sm btn-outline-primary me-2">Edit</button>
+                <button class="btn btn-sm btn-outline-danger">Delete</button>
+            </div>
+        </li>
+        {% endfor %}
+
+        <div class="container">
+            <div class="row justify-content-center mt-4">
+                <div class="col-md-8">
+                    <button class="btn btn-primary w-100">Add New Item</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.querySelectorAll('.form-check-input').forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+            const listItem = this.closest('.list-group-item');
+            const label = listItem.querySelector('.form-check-label');
+
+            listItem.classList.toggle('checked');
+
+            if (this.checked) {
+                label.style.textDecoration = "line-through";
+            } else {
+                label.style.textDecoration = "none";
+            }
+        });
+    });
+</script>
+{% endblock %}

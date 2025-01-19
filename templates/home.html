@@ -1,0 +1,159 @@
+{% extends 'navbar.html' %}
+
+{% block title %}Home Page{% endblock %}
+
+
+{% block content %}
+<div class="header-box">
+    <div class="text-center">
+        <h1>Speak what you want to buy next</h1>
+    </div>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="content">
+                    <div class="text-center mb-4">
+                        <button class="speak_btn" id="start">
+                            <i class="fas fa-microphone mic-icon"></i>
+                        </button>
+                    </div>
+                    <p id="output"></p>
+                    <div class="loader" id="loader"></div>
+                    <h2 class="text-center mb-3">Speak Now</h2>
+                    <input class="form-control" type="text" id="user_spoked">
+                    <div class="text-center">
+                        <button id="stop" class="btn btn-primary mt-3 d-none">Stop Listening</button>
+                    </div>
+
+                    <p class="text-center my-3 text-justify">
+                        Click the microphone icon to start speaking, and your items will be automatically
+                        recognized and saved to your list. This makes it quick and easy to create and organize
+                        your list without needing to type.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="img-container">
+                    <img src="../static/image.jpg" alt="Person with Microphone" class="img-fluid rounded shadow">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!-- script -->
+{% block scripts %}
+<script>
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const loader = document.getElementById('loader');
+
+    if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+
+        // Configure SpeechRecognition
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+
+        const startButton = document.getElementById('start');
+        const stopButton = document.getElementById('stop');
+        const output = document.getElementById('output');
+        const user_spoked_ipt = document.getElementById('user_spoked');
+
+        // Start recognition
+        startButton.addEventListener('click', () => {
+            recognition.start();
+            // start loader
+            loader.style.display = "block"
+
+            output.textContent = 'Listening... Please speak.';
+            console.log('Speech recognition started');
+
+            recognitionTimer = setTimeout(() => {
+                recognition.stop();
+                console.log('Speech recognition stopped automatically');
+                // call the API
+                call_api()
+                loader.style.display = "none"
+            }, 5000);
+        });
+
+        // Stop recognition
+        stopButton.addEventListener('click', () => {
+            recognition.stop();
+            clearTimeout(recognitionTimer);
+            output.textContent = 'Stopped listening.';
+            console.log('Speech recognition stopped');
+            // call the API 
+            call_api()
+            loader.style.display = "none"
+        });
+
+        // Capture speech results
+        recognition.onresult = (event) => {
+            let speechText = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                speechText += event.results[i][0].transcript;
+            }
+            user_spoked_ipt.value = speechText;
+            user_spoked_ipt.style.display = 'block';
+        };
+
+        // Handle errors
+        recognition.onerror = (event) => {
+            console.error('Speech recognition error:', event.error);
+            output.textContent = `Error: ${event.error}`;
+        };
+    } else {
+        alert('Sorry, your browser does not support the Speech Recognition API.');
+    }
+
+    // send to API
+    async function call_api() {
+        let user_input = document.getElementById('user_spoked');
+        console.log("object");
+        if (user_input.value != '') {
+            fetch('http://127.0.0.1:5000/idenify_action', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'user_input': user_input.value
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const action = data[0]
+                    const item = data[1]
+                    if (action && item) {
+                        fetch("http://127.0.0.1:5000/save_item", {
+                            method: "POST",
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                'action': action,
+                                'item': item,
+                            })
+                        })
+                            .then((res) => res.json())
+                            .then((answer) => {
+                                console.log(answer);
+                                window.location.href = "/list"
+                            })
+                            .catch((error) => console.log("error occured in saving record "+error) )
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("Unable to process the input")
+                });
+        } else {
+            alert('Please input something!');
+        }
+    }
+</script>
+{% endblock %}

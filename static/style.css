@@ -1,0 +1,108 @@
+.header-box {
+    background-color: rgb(26, 26, 26);
+    padding: 4em;
+    color: white;
+}
+
+.mic-icon {
+    font-size: 4rem;
+    color: #007bff;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+.img-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.speak_btn {
+    background-color: transparent;
+    /* border: none; */
+    padding: 1.5em 2em;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(186, 173, 173, 0.5);
+}
+
+#stop {
+    width: 25%;
+}
+
+#user_spoked {
+    display: none;
+}
+
+.cus_shadow {
+    box-shadow: 0 0 15px rgba(144, 141, 141, 0.5);
+    border-radius: 20px;
+}
+
+.error_msg {
+    color: red;
+    font-size: 18px;
+    font-weight: 500;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.shopping-list-header {
+    background-color: #27282a;
+    color: white;
+    padding: 20px 0;
+    margin-bottom: 30px;
+}
+
+.shopping-list-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.list-group-item {
+    transition: background-color 0.3s ease;
+}
+
+.list-group-item:hover {
+    background-color: #e9ecef;
+}
+
+.list-group-item.checked {
+    background-color: #d4edda;
+}
+
+.item-actions {
+    display: none;
+}
+
+.list-group-item:hover .item-actions {
+    display: block;
+}
+
+.loader {
+    display: none;
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

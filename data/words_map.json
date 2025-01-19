@@ -1,0 +1,14 @@
+{
+    "add": [
+        "add", "addition", "give", "add-on", "append", "push", "buy", 
+        "purchase", "insert", "include", "input", "attach", "put in", "set"
+    ],
+    "remove": [
+        "remove", "delete", "subtract", "take away", "erase", "discard", 
+        "clear", "get rid of", "withdraw", "eliminate", "cut"
+    ],
+    "view": [
+        "show", "display", "view", "show me", "present", "list", 
+        "visualize", "expose", "demonstrate", "reveal", "what's there"
+    ]
+}
