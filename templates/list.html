@@ -46,37 +46,45 @@
                         Add New Item
                     </button>
                 </div>
+                <div class="col-md-8 my-3">
+                    <input type="text" name="list_id" id="list_id" value="{{ lists['list_id'] }}" hidden>
+                    <button class="btn btn-danger w-100" onclick="deleteAllItems()">
+                        Remove all Items
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- recommended items list -->
-    <div class="mb-5 reco_list_cont">
-        <div class="row justify-content-center mt-4">
-            <div class="col-md-8">
-                <h3>Recommended Items</h3>
-                <ul class="list-group list-group-flush">
-                    <div class="row">
-                        {% for item in reco_items %}
-                        <div class="col-md-6 mb-3"> <!-- 6 columns for larger screens -->
-                            <li class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                <div class="form-check">
-                                    <input class="reco_ipt_box" id="{{item}}" value="{{item}}" readonly>
-                                </div>
-                                <div class="item-actions">
-                                    <button class="btn btn-sm btn-outline-primary me-2"
-                                        onclick='addToList("{{ item }}")'>
-                                        Add to List
-                                    </button>
-                                </div>
-                            </li>
+    {% if reco_items %}
+        <div class="mb-5 reco_list_cont">
+            <div class="row justify-content-center mt-4">
+                <div class="col-md-8">
+                    <h3>Recommended Items</h3>
+                    <ul class="list-group list-group-flush">
+                        <div class="row">
+                            {% for item in reco_items %}
+                            <div class="col-md-6 mb-3"> <!-- 6 columns for larger screens -->
+                                <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                    <div class="form-check">
+                                        <input class="reco_ipt_box" id="{{item}}" value="{{item}}" readonly>
+                                    </div>
+                                    <div class="item-actions">
+                                        <button class="btn btn-sm btn-outline-primary me-2"
+                                            onclick='addToList("{{ item }}")'>
+                                            Add to List
+                                        </button>
+                                    </div>
+                                </li>
+                            </div>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
-                    </div>
-                </ul>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
+    {% endif %}
 
     <!-- modal for adding more item to list -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -104,7 +112,6 @@
             </div>
         </div>
     </div>
-
 </div>
 {% endblock %}
 
@@ -258,17 +265,41 @@
                     'item': item,
                 })
             }).then((res) => res.json())
-            .then((answer) => {
-                console.log(answer);
-                window.location.href = "/list"
-            })
-            .catch((error) => console.log("error occured in saving record " + error))
+                .then((answer) => {
+                    console.log(answer);
+                    window.location.href = "/list"
+                })
+                .catch((error) => console.log("error occured in saving record " + error))
         } else {
             console.log("select the item first");
         }
     }
 
 
+    // delete the entire list
+    async function deleteAllItems() {
+        let list_id = document.getElementById("list_id").value;
+        console.log(list_id);
+        await fetch('http://127.0.0.1:5000/delete_list', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "list_id": list_id,
+            })
+        })
+        .then((res) => res.json())
+        .then((answer) => {
+            if (answer['status'] == 200) {
+                alert("List deleted successfully");
+            } else {
+                alert("Error occured while deleting list");
+            }
+            console.log("answer is ", answer);
+            //window.location.href = "/list"
+        }).catch((error) => console.log("error occured in saving record " + error))
+    }
 
 </script>
 {% endblock %}

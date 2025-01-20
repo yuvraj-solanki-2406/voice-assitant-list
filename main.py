@@ -75,13 +75,26 @@ def logout():
 def open_your_list():
     if 'user_id' not in session:
         return redirect('/login')
-    else:
+    try:
         manage_list = ManageList()
         user_lists, reco_items = manage_list.view_list()
-        if user_lists:
+
+        if user_lists and reco_items:
             return render_template('list.html', lists=user_lists, reco_items=reco_items)
         else:
-            return render_template('list.html', lists=None)
+            return render_template('list.html', lists=None, reco_items=None)
+    except:
+        return render_template('list.html', lists=None, reco_items=None)
+
+
+
+# delete full list
+@app.route('/delete_list', methods=['POST'])
+def delete_entire_list():
+    manage_lst = ManageList()
+    list_id = request.json.get("list_id")
+    res = manage_lst.delete_full_list(list_id)
+    return res
 
 
 # categories page
@@ -90,9 +103,12 @@ def categories():
     if 'user_id' not in session:
         return redirect('/login')
     else:
-        user_cate_lst = display_user_category()
+        try:
+            user_cate_lst = display_user_category()
+            return render_template('categories.html', user_cate=user_cate_lst)
+        except:
+            return render_template('categories.html', user_cate=None)
 
-        return render_template('categories.html', user_cate=user_cate_lst)
 
 # recognize text
 @app.route('/recognize_text', methods=['POST'])

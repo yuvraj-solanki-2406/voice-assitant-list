@@ -26,22 +26,26 @@
         <!-- Content Sections -->
         <div id="my-items" class="content-section my-4 active">
             <h3>My Items Category</h3>
-            <div class="row my-4">
-                {% for item, cate in user_cate.items() %}
-                    <div class="col-md-3 col-sm-12">
-                        <div class="card cus_shadow_card" style="width: 18rem;">
-                            <div class="card-header">
-                                Item name: {{ item.upper() }}
+            {% if user_cate %}
+                <div class="row my-4">
+                    {% for item, cate in user_cate.items() %}
+                        <div class="col-md-3 col-sm-12">
+                            <div class="card cus_shadow_card" style="width: 18rem;">
+                                <div class="card-header">
+                                    Item name: {{ item.upper() }}
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">
+                                        <h6>Category Name: {{ cate }}</h6>
+                                    </li>
+                                </ul>
                             </div>
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item">
-                                    <h6>Category Name: {{ cate }}</h6>
-                                </li>
-                            </ul>
                         </div>
-                    </div>
-                {% endfor %}
-            </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div>No Items Found</div>
+            {% endif %}
         </div>
         <div id="all-categories" class="content-section my-4">
             <h3>All Categories</h3>

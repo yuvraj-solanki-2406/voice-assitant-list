@@ -117,11 +117,11 @@ class ManageList:
     
     # view the lists
     def view_list(self):
-        user_id = "d6cfa49e-093c-4048-8366-e9a286cfe306"
         user_id = session['user_id']
         response = db_obj['lists'].find_one({"user_id": user_id})
 
         if response:
+            print("insdie reposnee ", response)
             recommend_list = []
             for item in response['item']:
                 reco_item_lst = recommend(item)
@@ -136,4 +136,15 @@ class ManageList:
 
             return response, recommend_list
         else:
-            None
+            None, []
+
+
+    # delete full list
+    def delete_full_list(self, list_id):
+        if list_id:
+            db_obj['lists'].delete_one({"list_id": list_id})
+            db_obj['categories'].delete_one({"list_id": list_id})
+
+            return {"status": 200, "message": "List deleted successfully"}      
+        else:
+            return {"status": 400, "message": "List id not found"}
