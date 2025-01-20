@@ -1,0 +1,76 @@
+{% extends 'navbar.html' %}
+
+{% block title %}Item Categories{% endblock %}
+
+
+{% block content %}
+<div>
+    <div class="text-center">
+        <header class="shopping-list-header text-center">
+            <h1 class="shopping-list-title">Items Category</h1>
+        </header>
+    </div>
+
+    <div class="container mt-4">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="#" id="my_item_cate" onclick="showSection('my-items')">
+                    My Items Category</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" id="all_item_cate" onclick="showSection('all-categories')">All
+                    Category</a>
+            </li>
+        </ul>
+
+        <!-- Content Sections -->
+        <div id="my-items" class="content-section my-4 active">
+            <h3>My Items Category</h3>
+            <div class="row my-4">
+                {% for item, cate in user_cate.items() %}
+                    <div class="col-md-3 col-sm-12">
+                        <div class="card cus_shadow_card" style="width: 18rem;">
+                            <div class="card-header">
+                                Item name: {{ item.upper() }}
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <h6>Category Name: {{ cate }}</h6>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div id="all-categories" class="content-section my-4">
+            <h3>All Categories</h3>
+            <p>Content related to "All Categories" goes here.</p>
+        </div>
+    </div>
+
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function showSection(sectionId) {
+        document.querySelectorAll('.content-section').forEach(section => {
+            section.classList.remove('active');
+        });
+
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+        document.getElementById(sectionId).classList.add('active');
+
+        if (sectionId === 'my-items') {
+            document.getElementById('my_item_cate').classList.add('active');
+        } else if (sectionId === 'all-categories') {
+            document.getElementById('all_item_cate').classList.add('active');
+        }
+    }
+
+</script>
+{% endblock %}

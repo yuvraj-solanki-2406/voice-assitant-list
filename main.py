@@ -6,10 +6,14 @@ import ast
 import src.db as db
 import secrets
 from src.manage_list import ManageList
+from src.categories import display_user_category, display_all_categories
+import warnings
+from sklearn.exceptions import InconsistentVersionWarning
 from src.auth import register, login
 
 # create flask app
 app=Flask(__name__)
+warnings.filterwarnings("ignore", category=InconsistentVersionWarning)
 app.secret_key = secrets.token_hex(16)
 
 # default page
@@ -73,7 +77,22 @@ def open_your_list():
         return redirect('/login')
     else:
         manage_list = ManageList()
-        return render_template('list.html', lists=manage_list.view_list())
+        user_lists, reco_items = manage_list.view_list()
+        if user_lists:
+            return render_template('list.html', lists=user_lists, reco_items=reco_items)
+        else:
+            return render_template('list.html', lists=None)
+
+
+# categories page
+@app.route('/categories')
+def categories():
+    if 'user_id' not in session:
+        return redirect('/login')
+    else:
+        user_cate_lst = display_user_category()
+
+        return render_template('categories.html', user_cate=user_cate_lst)
 
 # recognize text
 @app.route('/recognize_text', methods=['POST'])

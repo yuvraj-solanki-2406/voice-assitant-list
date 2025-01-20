@@ -10,28 +10,101 @@
             <h1 class="shopping-list-title">My Shopping List</h1>
         </header>
     </div>
-    <div class="container my-5 cus_shadow p-5" style="width: 60%;">
-        {% for item in lists['item'] %}
-        <li class="list-group-item d-flex justify-content-between align-items-center py-3">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id={{item}}>
-                <label class="form-check-label" for={{item}}>{{ item }}</label>
+    <!-- list items -->
+    <div class="container my-5 cus_shadow p-5 list_item_cont" style="width: 60%;">
+        {% if lists %}
+            {% for item in lists['item'] %}
+                <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id={{item}}>
+                        <label class="form-check-label" for={{item}}>{{ item }}</label>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-sm btn-outline-primary me-2">Edit</button>
+                        <button class="btn btn-sm btn-outline-danger" onclick='delete_item("{{ item }}")'>Delete</button>
+                    </div>
+                </li>
+            {% endfor %}
+            <div class="row">
+                <div class="col-md-6">
+                    <i>List Created on: <b>{{ lists['created_at'] }} </b></i>
+                </div>
+                <div class="col-md-6 updated_date">
+                    <i>Last Updated at: <b>{{ lists['updated_at'] }} </b></i>
+                </div>
             </div>
-            <div class="item-actions">
-                <button class="btn btn-sm btn-outline-primary me-2">Edit</button>
-                <button class="btn btn-sm btn-outline-danger">Delete</button>
-            </div>
-        </li>
-        {% endfor %}
+        {% else %}
+            <p>No items Found</p>
+        {% endif %}
 
+        <!-- add new item button -->
         <div class="container">
             <div class="row justify-content-center mt-4">
                 <div class="col-md-8">
-                    <button class="btn btn-primary w-100">Add New Item</button>
+                    <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal"
+                        data-bs-target="#exampleModal">
+                        Add New Item
+                    </button>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- recommended items list -->
+    <div class="mb-5 reco_list_cont">
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-8">
+                <h3>Recommended Items</h3>
+                <ul class="list-group list-group-flush">
+                    <div class="row">
+                        {% for item in reco_items %}
+                        <div class="col-md-6 mb-3"> <!-- 6 columns for larger screens -->
+                            <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                <div class="form-check">
+                                    <input class="reco_ipt_box" id="{{item}}" value="{{item}}" readonly>
+                                </div>
+                                <div class="item-actions">
+                                    <button class="btn btn-sm btn-outline-primary me-2"
+                                        onclick='addToList("{{ item }}")'>
+                                        Add to List
+                                    </button>
+                                </div>
+                            </li>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- modal for adding more item to list -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h5 class="modal-title">Add item to your list</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-4">
+                    <div class="row">
+                        <div class="col-md-6 text-center">
+                            <button class="speak_btn modal-btn-mic" id="start">
+                                <i class="fas fa-microphone mic-icon"></i>
+                            </button>
+                        </div>
+                        <div class="col-md-6 text-center">
+                            <h2 class="speak_now_h2">Speak Now</h2>
+                        </div>
+                    </div>
+                    <p id="output"></p>
+                    <div class="loader" id="loader"></div>
+                    <input class="form-control" type="text" id="user_spoked">
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 {% endblock %}
 
@@ -51,5 +124,151 @@
             }
         });
     });
+
+    const add_to_list = document.getElementById('add_to_list_item');
+    async function addToList(item) {
+        alert(item);
+        fetch("http://127.0.0.1:5000/save_item", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'action': "add",
+                'item': item,
+            })
+        }).then((res) => res.json()).then((answer) => {
+            console.log(answer);
+            alert("Item added to list");
+            window.location.href = "/list";
+        }).catch((error) => console.log("error occured in saving record " + error))
+    }
+
+    // add new item in the list with mic
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const loader = document.getElementById('loader');
+
+    if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+
+        // Configure SpeechRecognition
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+
+        const startButton = document.getElementById('start');
+        const stopButton = document.getElementById('stop');
+        const output = document.getElementById('output');
+        const user_spoked_ipt = document.getElementById('user_spoked');
+
+        // Start recognition
+        startButton.addEventListener('click', () => {
+            recognition.start();
+            // start loader
+            loader.style.display = "block"
+
+            output.textContent = 'Listening... Please speak.';
+            console.log('Speech recognition started');
+
+            recognitionTimer = setTimeout(() => {
+                recognition.stop();
+                console.log('Speech recognition stopped automatically');
+                // call the API
+                call_api()
+                loader.style.display = "none"
+            }, 5000);
+        });
+
+        // Capture speech results
+        recognition.onresult = (event) => {
+            let speechText = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                speechText += event.results[i][0].transcript;
+            }
+            user_spoked_ipt.value = speechText;
+            user_spoked_ipt.style.display = 'block';
+        };
+
+        // Handle errors
+        recognition.onerror = (event) => {
+            console.error('Speech recognition error:', event.error);
+            output.textContent = `Error: ${event.error}`;
+        };
+    } else {
+        alert('Sorry, your browser does not support the Speech Recognition API.');
+    }
+
+    // send to API
+    async function call_api() {
+        let user_input = document.getElementById('user_spoked');
+        console.log("object");
+        if (user_input.value != '') {
+            fetch('http://127.0.0.1:5000/idenify_action', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'user_input': user_input.value
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const action = data[0]
+                    const item = data[1]
+                    if (action && item) {
+                        fetch("http://127.0.0.1:5000/save_item", {
+                            method: "POST",
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                'action': action,
+                                'item': item,
+                            })
+                        })
+                            .then((res) => res.json())
+                            .then((answer) => {
+                                console.log(answer);
+                                window.location.href = "/list"
+                            })
+                            .catch((error) => console.log("error occured in saving record " + error))
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("Unable to process the input")
+                });
+        } else {
+            alert('Please input something!');
+        }
+    }
+
+    // delete the items from list
+    async function delete_item(item) {
+        alert(item)
+        if (item) {
+            await fetch('http://127.0.0.1:5000/save_item', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'action': "remove",
+                    'item': item,
+                })
+            }).then((res) => res.json())
+            .then((answer) => {
+                console.log(answer);
+                window.location.href = "/list"
+            })
+            .catch((error) => console.log("error occured in saving record " + error))
+        } else {
+            console.log("select the item first");
+        }
+    }
+
+
+
 </script>
 {% endblock %}

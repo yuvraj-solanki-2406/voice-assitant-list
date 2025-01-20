@@ -4,6 +4,9 @@ from flask import session
 from src.db import db_obj
 from datetime import datetime
 from src.categories import put_in_category
+from src.recommendation import recommend
+from datetime import datetime
+
 
 class ManageList:
     def __init__(self):
@@ -40,7 +43,7 @@ class ManageList:
             db_obj['categories'].update_one(
                 {"list_id": user_list['list_id']},
                 {
-                    "$addToSet": {"category": put_in_category(item)},
+                    "$push": {"category": put_in_category(item)},
                     "$set": {"updated_at": datetime.now()}
                 }
             )
@@ -115,10 +118,22 @@ class ManageList:
     # view the lists
     def view_list(self):
         user_id = "d6cfa49e-093c-4048-8366-e9a286cfe306"
+        user_id = session['user_id']
         response = db_obj['lists'].find_one({"user_id": user_id})
 
-        response['_id'] = str(response['_id'])
-        response['created_at'] = response['created_at'].isoformat()
-        response['updated_at'] = response['updated_at'].isoformat()
+        if response:
+            recommend_list = []
+            for item in response['item']:
+                reco_item_lst = recommend(item)
+                recommend_list.append(reco_item_lst)
 
-        return response
+            response_items_set = set(response['item'])
+            recommend_list = [item for item_list in recommend_list for item in item_list if item not in response_items_set]
+
+            response['_id'] = str(response['_id'])
+            response['created_at'] = response['created_at'].strftime("%d %B %Y, %I:%M %p")
+            response['updated_at'] = response['updated_at'].strftime("%d %B %Y, %I:%M %p")
+
+            return response, recommend_list
+        else:
+            None

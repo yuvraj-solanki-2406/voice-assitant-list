@@ -31,10 +31,10 @@
             <div class="collapse navbar-collapse" id="navbarText">
                 <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">Home</a>
+                        <a class="nav-link active" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">Categories</a>
+                        <a class="nav-link active" href="/categories">Categories</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" href="/list">Your List</a>
@@ -44,7 +44,18 @@
                     {% if "user_id" not in session %}
                         <a href="/login" class="btn btn-primary text-white" role="button">Login</a>
                     {% else %}
-                        <a href="/logout" class="btn btn-primary text-white" role="button">Logout</a>
+                        <div class="btn-group dropdown" style="right: 3em;">
+                            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Profile
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li><a class="dropdown-item" href="/profile">{{session['name']}}</a></li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="/logout">Logout</a>
+                                </li>
+                            </ul>
+                        </div>
                     {% endif %}
                 </span>
             </div>

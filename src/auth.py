@@ -40,6 +40,7 @@ def login(formData):
         if user:
             if bcrypt.checkpw(password.encode(), user["password"].encode()):
                 session['user_id'] = user['uuid']
+                session['name'] = user['name']
                 return {"status": "success", "message": "User logged in successfully"}
             else:
                 return {"status": "error", "message": "Invalid password"}
@@ -53,6 +54,7 @@ def login(formData):
 def find_user_details(user_id):
     user = db_obj['users'].find_one({"uuid": user_id})
     if user:
+        return {"status": "success", "data": user}
         return {"status": "success", "data": user}
     else:
         return {"status": "error", "message": "User not found"}

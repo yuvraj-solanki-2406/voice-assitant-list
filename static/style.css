@@ -106,3 +106,54 @@
         transform: rotate(360deg);
     }
 }
+
+.reco_ipt_box {
+    border: none;
+    outline: none;
+    background-color: transparent;
+}
+
+@media (max-width: 768px) {
+    .list_item_cont {
+        width: 100% !important;
+        margin: 0;
+        padding: 10px !important;
+        margin: 0px auto !important;
+    }
+
+    .cus_shadow {
+        box-shadow: none !important;
+    }
+
+    .reco_list_cont {
+        padding: 0 10px;
+    }
+}
+
+.speak_now_h2 {
+    position: absolute;
+    top: 35%;
+}
+
+.modal-btn-mic {
+    background-color: black;
+    box-shadow: 0 0 18px 6px #a8d2ff;
+}
+
+.content-section {
+    display: none;
+}
+
+.content-section.active {
+    display: block;
+}
+
+.cus_shadow_card {
+    box-shadow: 0 0 15px rgba(144, 141, 141, 0.5);
+}
+
+.updated_date {
+    display: flex;
+    align-items: end;
+    justify-content: end;
+}
