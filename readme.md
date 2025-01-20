@@ -57,8 +57,8 @@ The **Voice Command Shopping Assistant** is a smart, voice-controlled applicatio
 ### Steps:
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/voice-command-shopping-assistant.git
-   cd voice-command-shopping-assistant
+   git clone https://github.com/yuvraj-solanki-2406/voice-assitant-list.git
+   cd voice-assistant-list
    ```
 
 2. **Create a virtual environment**:
