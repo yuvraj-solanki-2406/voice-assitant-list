@@ -20,7 +20,7 @@
                         <label class="form-check-label" for={{item}}>{{ item }}</label>
                     </div>
                     <div class="item-actions">
-                        <button class="btn btn-sm btn-outline-primary me-2">Edit</button>
+                        <!-- <button class="btn btn-sm btn-outline-primary me-2">Edit</button> -->
                         <button class="btn btn-sm btn-outline-danger" onclick='delete_item("{{ item }}")'>Delete</button>
                     </div>
                 </li>
@@ -101,8 +101,8 @@
                                 <i class="fas fa-microphone mic-icon"></i>
                             </button>
                         </div>
-                        <div class="col-md-6 text-center">
-                            <h2 class="speak_now_h2">Speak Now</h2>
+                        <div class="col-md-6 text-">
+                            <h2 class="speak_now_h2" id="mic_txt">Click on Mic to Speak</h2>
                         </div>
                     </div>
                     <p id="output"></p>
@@ -165,7 +165,7 @@
 
         const startButton = document.getElementById('start');
         const stopButton = document.getElementById('stop');
-        const output = document.getElementById('output');
+        const output = document.getElementById('mic_txt');
         const user_spoked_ipt = document.getElementById('user_spoked');
 
         // Start recognition
